@@ -38,3 +38,11 @@ app.Run();
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary) {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+
+// This is a workaround to allow tests to target entry point.
+//   honestly might be better to make this a normal class entrypoint.
+# if DEBUG
+public partial class Program {
+}
+#endif
