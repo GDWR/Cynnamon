@@ -1,3 +1,5 @@
+using System.Text.Encodings.Web;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,6 +27,15 @@ app.MapGet("/movie", () => {
     .WithOpenApi()
     .WithDescription("Get all movies")
     .Produces<IEnumerable<Movie>>(StatusCodes.Status200OK);
+
+app.MapPost("/movie", (Movie movie) => {
+        var urlEncodedTitle = UrlEncoder.Default.Encode(movie.Title);
+        return Results.Created($"/movie/{urlEncodedTitle}", movie);
+    })
+    .WithOpenApi()
+    .WithDescription("Add a new movie")
+    .Produces(StatusCodes.Status201Created);
+
 
 app.Run();
 
