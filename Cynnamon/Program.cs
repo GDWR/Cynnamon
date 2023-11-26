@@ -78,7 +78,4 @@ class Database : DbContext {
 
 // This is a workaround to allow tests to target entry point.
 //   honestly might be better to make this a normal class entrypoint.
-# if DEBUG
-public partial class Program {
-}
-#endif
+public partial class Program {}
