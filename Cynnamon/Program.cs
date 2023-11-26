@@ -43,12 +43,32 @@ app.MapPost("/movie", async (Database db, AddMovieRequest movieRequest) => {
     })
     .WithDescription("Add a new movie");
 
+app.MapPatch("/movie/{id}", async (Database db, int id, PatchMovieRequest movieRequest) => {
+        // Likely a better way to do this all on server (SQL) side.
+        var movie = await db.Movies.FindAsync(id);
+        movie.Title = movieRequest.Title ?? movie.Title;
+        movie.Description = movieRequest.Description ?? movie.Description;
+        movie.Duration = movieRequest.Duration ?? movie.Duration;
+        movie.Genre = movieRequest.Genre ?? movie.Genre;
+        await db.SaveChangesAsync();
+        return TypedResults.Ok(movie);
+    })
+    .WithDescription("Update an existing movie by id");
 
 app.Run();
 
 
 public record AddMovieRequest(string Title, string Description, string Duration, string Genre);
-public record Movie(int? Id, string Title, string Description, string Duration, string Genre);
+
+public record PatchMovieRequest(string? Title, string? Description, string? Duration, string? Genre);
+
+public class Movie(int? id, string title, string description, string duration, string genre) {
+    public int? Id { get; set; } = id;
+    public string Title { get; set; } = title;
+    public string Description { get; set; } = description;
+    public string Duration { get; set; } = duration;
+    public string Genre { get; set; } = genre;
+};
 
 class Database : DbContext {
     public Database(DbContextOptions<Database> options) : base(options) { }
