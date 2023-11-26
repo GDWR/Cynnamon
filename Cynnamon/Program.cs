@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +25,13 @@ app.MapGet("/movie", async (Database db) => TypedResults.Ok(await db.Movies.ToLi
     .WithOpenApi()
     .WithDescription("Get all movies");
 
-app.MapGet("/movie/{id}", async (Database db, int id) => TypedResults.Ok(await db.Movies.FindAsync(id)))
+app.MapGet("/movie/{id:int}", async Task<Results<Ok<Movie>, NotFound, StatusCodeHttpResult>> (Database db, int id) => 
+        await db.Movies.FindAsync(id) switch {
+            null => TypedResults.NotFound(),
+            {  Deleted: true } => TypedResults.StatusCode(StatusCodes.Status410Gone),
+            var movie => TypedResults.Ok(movie),
+        }
+    )
     .WithOpenApi()
     .WithDescription("Get movie by id");
 
@@ -43,17 +51,30 @@ app.MapPost("/movie", async (Database db, AddMovieRequest movieRequest) => {
     })
     .WithDescription("Add a new movie");
 
-app.MapPatch("/movie/{id}", async (Database db, int id, PatchMovieRequest movieRequest) => {
-        // Likely a better way to do this all on server (SQL) side.
+app.MapPatch("/movie/{id}", async (Database db, int id, PatchMovieRequest moviePatchRequest) => {
         var movie = await db.Movies.FindAsync(id);
-        movie.Title = movieRequest.Title ?? movie.Title;
-        movie.Description = movieRequest.Description ?? movie.Description;
-        movie.Duration = movieRequest.Duration ?? movie.Duration;
-        movie.Genre = movieRequest.Genre ?? movie.Genre;
+
+        if (movie.Deleted) TypedResults.StatusCode(StatusCodes.Status410Gone);
+
+        // Likely a better way to do this all on server (SQL) side.
+        movie.Title = moviePatchRequest.Title ?? movie.Title;
+        movie.Description = moviePatchRequest.Description ?? movie.Description;
+        movie.Duration = moviePatchRequest.Duration ?? movie.Duration;
+        movie.Genre = moviePatchRequest.Genre ?? movie.Genre;
         await db.SaveChangesAsync();
         return TypedResults.Ok(movie);
     })
     .WithDescription("Update an existing movie by id");
+
+
+app.MapDelete("/movie/{id:int}", async (Database db, int id) => {
+        var movie = await db.Movies.FindAsync(id);
+        movie.Deleted = true;
+        await db.SaveChangesAsync();
+        return TypedResults.Ok();
+    })
+    .WithDescription("Delete a movie by id");
+
 
 app.Run();
 
@@ -68,6 +89,8 @@ public class Movie(int? id, string title, string description, string duration, s
     public string Description { get; set; } = description;
     public string Duration { get; set; } = duration;
     public string Genre { get; set; } = genre;
+
+    [JsonIgnore] public bool Deleted { get; set; } = false;
 };
 
 class Database : DbContext {
