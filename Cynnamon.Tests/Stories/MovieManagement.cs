@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 
 namespace Cynnamon.Tests.Stories;
 
-[Collection("Sequential")]
+[Collection("MovieManagement")]
 public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClassFixture<TestWebApplicationFactory<Program>> {
     private readonly HttpClient _httpClient = factory.CreateClient();
     private readonly AddMovieRequest _testMovieRequest = new(
@@ -30,7 +30,7 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
     }
 
     [Fact]
-    public async Task Movie1_Movie2_NewMovieNowContainedInAllMovies() {
+    public async Task Movie2_NewMovieNowContainedInAllMovies() {
         var response = await _httpClient.GetAsync("/movie");
         response.EnsureSuccessStatusCode();
 
