@@ -12,7 +12,7 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         var response = await _httpClient.GetAsync("/movie");
         response.EnsureSuccessStatusCode();
 
-        var movies = await response.Content.ReadFromJsonAsync<Movie[]>();
+        var movies = await response.Content.ReadFromJsonAsync<IEnumerable<Movie>>();
         Assert.NotNull(movies);
     }
 }
