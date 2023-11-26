@@ -1,0 +1,13 @@
+[*]
+
+# Microsoft .NET properties
+csharp_indent_braces = false
+csharp_new_line_before_open_brace = accessors,control_blocks,events,indexers,local_functions,methods,properties
+
+# ReSharper properties
+resharper_accessor_owner_body = expression_body
+resharper_blank_lines_after_block_statements = 1
+resharper_blank_lines_before_multiline_statements = 1
+resharper_csharp_indent_invocation_pars = outside_and_inside
+resharper_csharp_other_braces = end_of_line
+resharper_place_expr_property_on_single_line = true
