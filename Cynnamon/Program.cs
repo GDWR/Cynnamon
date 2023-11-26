@@ -23,6 +23,10 @@ app.MapGet("/movie", async (Database db) => TypedResults.Ok(await db.Movies.ToLi
     .WithOpenApi()
     .WithDescription("Get all movies");
 
+app.MapGet("/movie/{id}", async (Database db, int id) => TypedResults.Ok(await db.Movies.FindAsync(id)))
+    .WithOpenApi()
+    .WithDescription("Get movie by id");
+
 app.MapPost("/movie", async (Database db, AddMovieRequest movieRequest) => {
         var movie = new Movie(
             null,
