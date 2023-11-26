@@ -58,4 +58,18 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
             Assert.Equal(_testMovieRequest.Genre, movie.Genre);
         });
     }
+    
+    
+    [Fact, TestIndex(4)]
+    public async Task Movie4_DeleteExistingMovie()
+    {
+        // Making assumption we are using incrementing ids from 1, may change in the future.
+        var deleteRequest = await _httpClient.DeleteAsync("/movie/1");
+        var getRequest = await _httpClient.GetAsync("/movie/1");
+
+        Assert.Multiple(() => {
+            Assert.Equal(HttpStatusCode.OK, deleteRequest.StatusCode);
+            Assert.Equal(HttpStatusCode.Gone, getRequest.StatusCode);
+        });
+    }
 }
