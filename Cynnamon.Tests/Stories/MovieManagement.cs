@@ -2,7 +2,6 @@ using System.Net.Http.Json;
 
 namespace Cynnamon.Tests.Stories;
 
-record Movie(string Title, string Description, string Duration, string Genre);
 
 [Collection("Sequential")]
 public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClassFixture<TestWebApplicationFactory<Program>> {

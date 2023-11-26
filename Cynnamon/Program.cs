@@ -15,30 +15,19 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseHttpsRedirection();
 
-var summaries = new[] {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapGet("/movie", () => {
+    return new[] {
+        new Movie("The Matrix", "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.", "2h 16m", "Action, Sci-Fi"),
+        new Movie("The Matrix Reloaded", "Freedom fighters Neo, Trinity and Morpheus continue to lead the revolt against the Machine Army, unleashing their arsenal of extraordinary skills and weaponry against the systematic forces of repression and exploitation.", "2h 18m", "Action, Sci-Fi"),
+        new Movie("The Matrix Revolutions", "The human city of Zion defends itself against the massive invasion of the machines as Neo fights to end the war at another front while also opposing the rogue Agent Smith.", "2h 9m", "Action, Sci-Fi"),
+    };
+});
 
-app.MapGet("/weatherforecast", () => {
-        var forecast = Enumerable.Range(1, 5)
-            .Select(index => new WeatherForecast(
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary) {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
 
+public record Movie(string Title, string Description, string Duration, string Genre);
 
 // This is a workaround to allow tests to target entry point.
 //   honestly might be better to make this a normal class entrypoint.
