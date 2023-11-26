@@ -10,7 +10,7 @@ as tbh, it looked like a fun project to do and I will be trying out some new too
 ### MovieManagement
 - [x] `Movie1`: Retrieve a list of available movies with their details (title, description, duration, genre, etc.).
 - [x] `Movie2`: Add new movies to the system.
-- [ ] `Movie3`: Update existing movies.
+- [x] `Movie3`: Update existing movies.
 - [ ] `Movie4`: Delete movies from the system.
 
 ### TheaterManagement
