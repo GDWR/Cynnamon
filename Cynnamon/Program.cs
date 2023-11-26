@@ -1,6 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using System.Text.Encodings.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<Database>(opt => opt.UseInMemoryDatabase("Cynnamon"));
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -41,6 +44,12 @@ app.Run();
 
 
 public record Movie(string Title, string Description, string Duration, string Genre);
+
+class Database : DbContext {
+    public Database(DbContextOptions<Database> options) : base(options) { }
+
+    public DbSet<Movie> Movies => Set<Movie>();
+}
 
 // This is a workaround to allow tests to target entry point.
 //   honestly might be better to make this a normal class entrypoint.
