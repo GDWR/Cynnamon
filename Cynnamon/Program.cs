@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Text.Encodings.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,25 +19,32 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseHttpsRedirection();
 
-app.MapGet("/movie", (Database db) => db.Movies.ToListAsync())
+app.MapGet("/movie", async (Database db) => TypedResults.Ok(await db.Movies.ToListAsync()))
     .WithOpenApi()
-    .WithDescription("Get all movies")
-    .Produces<IEnumerable<Movie>>(StatusCodes.Status200OK);
+    .WithDescription("Get all movies");
 
-app.MapPost("/movie", (AddMovieRequest movie) => {
-        var urlEncodedTitle = UrlEncoder.Default.Encode(movie.Title);
-        return Results.Created($"/movie/{urlEncodedTitle}", movie);
+app.MapPost("/movie", async (Database db, AddMovieRequest movieRequest) => {
+        var movie = new Movie(
+            null,
+            movieRequest.Title,
+            movieRequest.Description,
+            movieRequest.Duration,
+            movieRequest.Genre
+        );
+
+        await db.AddAsync(movie);
+        await db.SaveChangesAsync();
+
+        return TypedResults.Created($"/movie/{movie.Id}", movie);
     })
-    .WithOpenApi()
-    .WithDescription("Add a new movie")
-    .Produces(StatusCodes.Status201Created);
+    .WithDescription("Add a new movie");
 
 
 app.Run();
 
 
 public record AddMovieRequest(string Title, string Description, string Duration, string Genre);
-public record Movie(int Id, string Title, string Description, string Duration, string Genre);
+public record Movie(int? Id, string Title, string Description, string Duration, string Genre);
 
 class Database : DbContext {
     public Database(DbContextOptions<Database> options) : base(options) { }
