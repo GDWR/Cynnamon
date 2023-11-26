@@ -8,7 +8,7 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
     private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
-    public async Task Movie1_Get_All_Movies() {
+    public async Task Movie1_GetAllMovies() {
         var response = await _httpClient.GetAsync("/movie");
         response.EnsureSuccessStatusCode();
 

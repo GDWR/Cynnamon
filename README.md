@@ -8,7 +8,7 @@ as tbh, it looked like a fun project to do and I will be trying out some new too
 ---
 ## Requirements
 ### MovieManagement
-- [ ] `Movie1`: Retrieve a list of available movies with their details (title, description, duration, genre, etc.).
+- [x] `Movie1`: Retrieve a list of available movies with their details (title, description, duration, genre, etc.).
 - [ ] `Movie2`: Add new movies to the system.
 - [ ] `Movie3`: Update existing movies.
 - [ ] `Movie4`: Delete movies from the system.
