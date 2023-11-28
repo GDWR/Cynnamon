@@ -1,3 +1,5 @@
+using Cynnamon.Models;
+using Cynnamon.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +11,7 @@ public record PatchMovieRequest(string? Title, string? Description, string? Dura
 
 [ApiController]
 [Route("[controller]")]
-public class MovieController(Database db) : ControllerBase {
+public class MovieController(DatabaseContext db) : ControllerBase {
 
     [HttpGet]
     public async Task<ActionResult<List<Movie>>> Get() => Ok(await db.Movies.ToListAsync());

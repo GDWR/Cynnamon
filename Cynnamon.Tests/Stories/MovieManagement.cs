@@ -1,4 +1,5 @@
 using Cynnamon.Controllers;
+using Cynnamon.Models;
 using System.Net;
 using System.Net.Http.Json;
 
