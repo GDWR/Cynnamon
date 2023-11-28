@@ -3,11 +3,7 @@ using Cynnamon.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cynnamon.Controllers; 
-
-public record AddMovieRequest(string Title, string Description, string Duration, string Genre);
-
-public record PatchMovieRequest(string? Title, string? Description, string? Duration, string? Genre);
+namespace Cynnamon.Controllers;
 
 [ApiController]
 [Route("[controller]")]
