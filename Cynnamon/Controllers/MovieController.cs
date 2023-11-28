@@ -36,17 +36,17 @@ public class MovieController(DatabaseContext db) : ControllerBase {
     }
     
     [HttpPatch("{id:int}")]
-    public ActionResult<Movie> Update(int id, PatchMovieRequest moviePatchRequest) {
+    public ActionResult<Movie> Update(int id,  UpdateMovieRequest movieUpdateRequest) {
         var movie = db.Movies.Find(id);
 
         if (movie is null) return NotFound();
         if (movie.Deleted) return StatusCode(StatusCodes.Status410Gone);
 
         // Likely a better way to do this all on server (SQL) side.
-        movie.Title = moviePatchRequest.Title ?? movie.Title;
-        movie.Description = moviePatchRequest.Description ?? movie.Description;
-        movie.Duration = moviePatchRequest.Duration ?? movie.Duration;
-        movie.Genre = moviePatchRequest.Genre ?? movie.Genre;
+        movie.Title = movieUpdateRequest.Title ?? movie.Title;
+        movie.Description = movieUpdateRequest.Description ?? movie.Description;
+        movie.Duration = movieUpdateRequest.Duration ?? movie.Duration;
+        movie.Genre = movieUpdateRequest.Genre ?? movie.Genre;
         db.SaveChanges();
         return Ok(movie);
     }

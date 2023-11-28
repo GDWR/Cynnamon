@@ -62,7 +62,7 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         var request = await _httpClient.PostAsJsonAsync("/Movie", _testMovieRequest);
         var movie = request.Content.ReadFromJsonAsync<Movie>();
 
-        var patchRequest = new PatchMovieRequest(null, "Updated description", null, null);
+        var patchRequest = new UpdateMovieRequest(null, "Updated description", null, null);
         var patchResponse = await _httpClient.PatchAsJsonAsync($"/Movie/{movie.Id}", patchRequest);
 
         var movieRequest = await _httpClient.GetAsync("/Movie/1");
@@ -81,7 +81,7 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
     [Fact]
     public async Task Movie3_UpdateNonExistingMovieIsNotFound()
     {
-        var patchRequest = new PatchMovieRequest(null, "Updated description", null, null);
+        var patchRequest = new UpdateMovieRequest(null, "Updated description", null, null);
         var patchResponse = await _httpClient.PatchAsJsonAsync($"/Movie/{int.MaxValue}", patchRequest);
 
         Assert.Equal(HttpStatusCode.NotFound, patchResponse.StatusCode);
@@ -110,7 +110,7 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         
         var deleteResponse = await _httpClient.DeleteAsync($"/Movie/{movie.Id}");
         
-        var patchRequest = new PatchMovieRequest(null, "Updated description", null, null);
+        var patchRequest = new UpdateMovieRequest(null, "Updated description", null, null);
         var patchResponse = await _httpClient.PatchAsJsonAsync($"/Movie/{movie.Id}", patchRequest);
 
         Assert.Multiple(() => {
