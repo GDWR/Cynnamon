@@ -33,7 +33,18 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         var response = await _httpClient.PostAsJsonAsync("/Movie", _testMovieRequest);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
+    
+    [Fact]
+    public async Task Movie2_AddNewMovieResourcesExists() {
+        var response = await _httpClient.PostAsJsonAsync("/Movie", _testMovieRequest);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
+        foreach (var location in response.Headers.GetValues("Location")) {
+            var locationResponse = await _httpClient.GetAsync(location);
+            Assert.Equal(HttpStatusCode.OK, locationResponse.StatusCode);
+        }
+    }
+    
     [Fact]
     public async Task Movie2_NewMovieNowContainedInAllMovies() {
         var response = await _httpClient.GetAsync("/Movie");
