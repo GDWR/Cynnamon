@@ -24,4 +24,20 @@ public class TheaterManagement(TestWebApplicationFactory<Program> factory) : ICl
             Assert.Equal(createdTheater.Seats, request.Seats);
         });
     }
+    
+    [Fact]
+    public async Task Theater2_UpdateAnExistingTheater() {
+        var createRequest = new AddTheaterRequest(Name: "Sydney Opera House", Location: "Sydney, Australia", Seats: 5738);
+        var createResponse = await _httpClient.PostAsJsonAsync("/Theater", createRequest);
+
+        var createdTheater = await createResponse.Content.ReadFromJsonAsync<Theater>();
+        Assert.NotNull(createdTheater);
+
+        var updateRequest = new UpdateTheaterRequest(Name: "Sydney Opera House", Location: "Sydney, Australia", Seats: 5738);
+        var response = await _httpClient.PatchAsJsonAsync($"/Theater/{createdTheater.Id}", updateRequest);
+
+        Assert.Multiple(() => {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        });
+    }
 }
