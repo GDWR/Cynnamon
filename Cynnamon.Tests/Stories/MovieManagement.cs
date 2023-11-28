@@ -80,7 +80,6 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         var request = await _httpClient.PostAsJsonAsync("/movie", _testMovieRequest);
         var movie = request.Content.ReadFromJsonAsync<Movie>();
         
-        // Making assumption we are using incrementing ids from 1, may change in the future.
         var deleteRequest = await _httpClient.DeleteAsync($"/movie/{movie.Id}");
         var getRequest = await _httpClient.GetAsync($"/movie/{movie.Id}");
 
