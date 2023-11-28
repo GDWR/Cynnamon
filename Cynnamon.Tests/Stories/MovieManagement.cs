@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 
 namespace Cynnamon.Tests.Stories;
 
-[TestCaseOrderer(SequenceTestCaseOrderer.TypeName, SequenceTestCaseOrderer.AssemblyName)]
 public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClassFixture<TestWebApplicationFactory<Program>> {
     private readonly HttpClient _httpClient = factory.CreateClient();
     private readonly AddMovieRequest _testMovieRequest = new(
@@ -13,8 +12,12 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
             "Animation, Adventure, Comedy"
         );
 
-    [Fact, TestIndex(0)]
+    [Fact]
     public async Task Movie1_GetAllMovies() {
+        foreach (var _ in Enumerable.Range(0, 10)) {
+            await _httpClient.PostAsJsonAsync("/movie", _testMovieRequest);
+        }
+        
         var response = await _httpClient.GetAsync("/movie");
         var movies = await response.Content.ReadFromJsonAsync<IEnumerable<Movie>>();
         Assert.Multiple(() => {
@@ -23,13 +26,13 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         });
     }
 
-    [Fact, TestIndex(1)]
+    [Fact]
     public async Task Movie2_AddNewMovie() {
         var response = await _httpClient.PostAsJsonAsync("/movie", _testMovieRequest);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
-    [Fact, TestIndex(2)]
+    [Fact]
     public async Task Movie2_NewMovieNowContainedInAllMovies() {
         var response = await _httpClient.GetAsync("/movie");
         var movies = await response.Content.ReadFromJsonAsync<IEnumerable<Movie>>();
@@ -40,32 +43,38 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         });
     }
 
-    [Fact, TestIndex(3)]
+    [Fact]
     public async Task Movie3_UpdateExistingMovie()
     {
+        var request = await _httpClient.PostAsJsonAsync("/movie", _testMovieRequest);
+        var movie = request.Content.ReadFromJsonAsync<Movie>();
+
         // Making assumption we are using incrementing ids from 1, may change in the future.
         var patchRequest = new PatchMovieRequest(null, "Updated description", null, null);
-        await _httpClient.PatchAsJsonAsync("/movie/1", patchRequest);
+        await _httpClient.PatchAsJsonAsync($"/movie/{movie.Id}", patchRequest);
 
         var movieRequest = await _httpClient.GetAsync("/movie/1");
-        var movie = await movieRequest.Content.ReadFromJsonAsync<Movie>();
+        var updatedMovie = await movieRequest.Content.ReadFromJsonAsync<Movie>();
 
         Assert.Multiple(() => {
             Assert.NotNull(movie);
-            Assert.Equal(_testMovieRequest.Title, movie.Title);
-            Assert.Equal("Updated description", movie.Description);
-            Assert.Equal(_testMovieRequest.Duration, movie.Duration);
-            Assert.Equal(_testMovieRequest.Genre, movie.Genre);
+            Assert.Equal(_testMovieRequest.Title, updatedMovie.Title);
+            Assert.Equal("Updated description", updatedMovie.Description);
+            Assert.Equal(_testMovieRequest.Duration, updatedMovie.Duration);
+            Assert.Equal(_testMovieRequest.Genre, updatedMovie.Genre);
         });
     }
     
     
-    [Fact, TestIndex(4)]
+    [Fact]
     public async Task Movie4_DeleteExistingMovie()
     {
+        var request = await _httpClient.PostAsJsonAsync("/movie", _testMovieRequest);
+        var movie = request.Content.ReadFromJsonAsync<Movie>();
+        
         // Making assumption we are using incrementing ids from 1, may change in the future.
-        var deleteRequest = await _httpClient.DeleteAsync("/movie/1");
-        var getRequest = await _httpClient.GetAsync("/movie/1");
+        var deleteRequest = await _httpClient.DeleteAsync($"/movie/{movie.Id}");
+        var getRequest = await _httpClient.GetAsync($"/movie/{movie.Id}");
 
         Assert.Multiple(() => {
             Assert.Equal(HttpStatusCode.OK, deleteRequest.StatusCode);
