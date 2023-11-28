@@ -51,10 +51,11 @@ app.MapPost("/movie", async (Database db, AddMovieRequest movieRequest) => {
     })
     .WithDescription("Add a new movie");
 
-app.MapPatch("/movie/{id}", async (Database db, int id, PatchMovieRequest moviePatchRequest) => {
+app.MapPatch("/movie/{id}", async Task<Results<Ok<Movie>, NotFound, StatusCodeHttpResult>> (Database db, int id, PatchMovieRequest moviePatchRequest) => {
         var movie = await db.Movies.FindAsync(id);
 
-        if (movie.Deleted) TypedResults.StatusCode(StatusCodes.Status410Gone);
+        if (movie is null) return TypedResults.NotFound();
+        if (movie.Deleted) return TypedResults.StatusCode(StatusCodes.Status410Gone);
 
         // Likely a better way to do this all on server (SQL) side.
         movie.Title = moviePatchRequest.Title ?? movie.Title;
