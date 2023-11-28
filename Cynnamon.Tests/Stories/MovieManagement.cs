@@ -65,6 +65,14 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         });
     }
     
+    [Fact]
+    public async Task Movie3_UpdateNonExistingMovieIsNotFound()
+    {
+        var patchRequest = new PatchMovieRequest(null, "Updated description", null, null);
+        var patchResponse = await _httpClient.PatchAsJsonAsync($"/movie/{int.MaxValue}", patchRequest);
+
+        Assert.Equal(HttpStatusCode.NotFound, patchResponse.StatusCode);
+    }
     
     [Fact]
     public async Task Movie4_DeleteExistingMovie()
