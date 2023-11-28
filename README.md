@@ -14,7 +14,7 @@ as tbh, it looked like a fun project to do and I will be trying out some new too
 - [x] `Movie4`: Delete movies from the system.
 
 ### TheaterManagement
-- [ ] `Theater1`: Create a new theater.
+- [x] `Theater1`: Create a new theater.
 - [ ] `Theater2`: Update an existing theater.
 - [ ] `Theater3`: Create a screening/showtime for a movie in a theater, including the date, time and available seats.
 - [ ] `Theater4`: Cancel a screening/showtime for a movie in a theater.
