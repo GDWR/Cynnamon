@@ -7,4 +7,5 @@ public class DatabaseContext : DbContext {
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
     public DbSet<Movie> Movies => Set<Movie>();
+    public DbSet<Theater> Theaters => Set<Theater>();
 }
