@@ -49,15 +49,15 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
         var request = await _httpClient.PostAsJsonAsync("/movie", _testMovieRequest);
         var movie = request.Content.ReadFromJsonAsync<Movie>();
 
-        // Making assumption we are using incrementing ids from 1, may change in the future.
         var patchRequest = new PatchMovieRequest(null, "Updated description", null, null);
-        await _httpClient.PatchAsJsonAsync($"/movie/{movie.Id}", patchRequest);
+        var patchResponse = await _httpClient.PatchAsJsonAsync($"/movie/{movie.Id}", patchRequest);
 
         var movieRequest = await _httpClient.GetAsync("/movie/1");
         var updatedMovie = await movieRequest.Content.ReadFromJsonAsync<Movie>();
 
         Assert.Multiple(() => {
             Assert.NotNull(movie);
+            Assert.Equal(HttpStatusCode.OK,patchResponse.StatusCode);
             Assert.Equal(_testMovieRequest.Title, updatedMovie.Title);
             Assert.Equal("Updated description", updatedMovie.Description);
             Assert.Equal(_testMovieRequest.Duration, updatedMovie.Duration);
