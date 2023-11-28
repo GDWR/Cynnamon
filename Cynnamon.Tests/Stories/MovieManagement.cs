@@ -88,4 +88,21 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
             Assert.Equal(HttpStatusCode.Gone, getRequest.StatusCode);
         });
     }
+    
+    [Fact]
+    public async Task Movie4_DeletedMovieIsGoneWhenPatching()
+    {
+        var request = await _httpClient.PostAsJsonAsync("/movie", _testMovieRequest);
+        var movie = request.Content.ReadFromJsonAsync<Movie>();
+        
+        var deleteResponse = await _httpClient.DeleteAsync($"/movie/{movie.Id}");
+        
+        var patchRequest = new PatchMovieRequest(null, "Updated description", null, null);
+        var patchResponse = await _httpClient.PatchAsJsonAsync($"/movie/{movie.Id}", patchRequest);
+
+        Assert.Multiple(() => {
+            Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.Gone, patchResponse.StatusCode);
+        });
+    }
 }
