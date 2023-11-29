@@ -23,7 +23,7 @@ public class TheaterController(DatabaseContext db) : ControllerBase {
         return Created($"/theater/{theater.Id}", theater);
     }
     
-    [HttpPatch("{id:int}")]
+    [HttpPatch("{id}")]
     public async Task<ActionResult<Theater>> Update(UpdateTheaterRequest theaterRequest, int id)
     {
         var theater = await db.Theaters.FindAsync(id);

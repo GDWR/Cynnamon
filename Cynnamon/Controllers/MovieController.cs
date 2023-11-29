@@ -12,7 +12,7 @@ public class MovieController(DatabaseContext db) : ControllerBase {
     [HttpGet]
     public async Task<ActionResult<List<Movie>>> Get() => Ok(await db.Movies.ToListAsync());
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<Movie>> GetById(int id) => await db.Movies.FindAsync(id) switch {
         null => NotFound(),
         { Deleted: true } => StatusCode(StatusCodes.Status410Gone),
@@ -35,7 +35,7 @@ public class MovieController(DatabaseContext db) : ControllerBase {
         return Created($"/movie/{movie.Id}", movie);
     }
     
-    [HttpPatch("{id:int}")]
+    [HttpPatch("{id}")]
     public ActionResult<Movie> Update(int id,  UpdateMovieRequest movieUpdateRequest) {
         var movie = db.Movies.Find(id);
 
@@ -51,8 +51,8 @@ public class MovieController(DatabaseContext db) : ControllerBase {
         return Ok(movie);
     }
     
-    [HttpDelete("{id:int}")]
-    public ActionResult Delete(int id) {
+    [HttpDelete("{id}")]
+    public ActionResult Delete([FromRoute] int id) {
         var movie = db.Movies.Find(id);
 
         if (movie is null) return NotFound();
