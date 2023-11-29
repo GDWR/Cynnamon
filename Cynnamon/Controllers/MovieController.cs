@@ -54,6 +54,10 @@ public class MovieController(DatabaseContext db) : ControllerBase {
     [HttpDelete("{id:int}")]
     public ActionResult Delete(int id) {
         var movie = db.Movies.Find(id);
+
+        if (movie is null) return NotFound();
+        if (movie.Deleted) return StatusCode(StatusCodes.Status410Gone);
+
         movie.Deleted = true;
         db.SaveChanges();
         return Ok();
