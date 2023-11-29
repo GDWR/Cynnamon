@@ -69,6 +69,7 @@ public class MovieManagement(TestWebApplicationFactory<Program> factory) : IClas
 
         Assert.Multiple(() => {
             Assert.NotNull(movie);
+            Assert.NotNull(updatedMovie);
             Assert.Equal(HttpStatusCode.OK,patchResponse.StatusCode);
             Assert.Equal(_testMovieRequest.Title, updatedMovie.Title);
             Assert.Equal("Updated description", updatedMovie.Description);
